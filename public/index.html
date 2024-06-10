@@ -1,43 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <title>D3 Geo Map</title>
+    <style>
+        #map {
+            width: 70%;
+            height: 60vh;
+            margin: auto;
+            position: relative;
+            /* background-color: aqua; */
+        }
+        .country {
+            stroke: #fff;
+            stroke-width: 0.5px;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            visibility: hidden;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <!-- <script src="https://cdn.skypack.dev/d3@7"></script>
+<script src="https://cdn.skypack.dev/topojson@3"></script> -->
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
+</head>
+<!-- <body>
+    <div id="map"></div>
+    <div class="tooltip" id="tooltip"></div>
+    <script>
+        
+      const data=
+      [
+        { country: 'Afghanistan', clicks: 2457, scans: 6914 },
+        { country: 'Albania', clicks: 8230, scans: 4682 },
+        { country: 'Algeria', clicks: 9742, scans: 1472 },
+        { country: 'Andorra', clicks: 1215, scans: 5859 },
+        { country: 'Angola', clicks: 4861, scans: 3184 },
+        { country: 'Antigua and Barbuda', clicks: 3471, scans: 6572 },
+        { country: 'Argentina', clicks: 4078, scans: 5639 },
+        { country: 'Armenia', clicks: 1193, scans: 8126 },
+        { country: 'Australia', clicks: 7117, scans: 9998 },
+        { country: 'Austria', clicks: 7543, scans: 1843 },
+        { country: 'Azerbaijan', clicks: 4546, scans: 6854 },
+        { country: 'Bahamas', clicks: 1548, scans: 6143 },
+        { country: 'Bahrain', clicks: 2967, scans: 7054 },
+        { country: 'Bangladesh', clicks: 2190, scans: 4203 },
+        { country: 'Barbados', clicks: 3674, scans: 7410 },
+        { country: 'Belarus', clicks: 9137, scans: 3067 },
+        { country: 'Belgium', clicks: 5692, scans: 1543 },
+        { country: 'Belize', clicks: 1068, scans: 5427 },
+        { country: 'Benin', clicks: 1837, scans: 9208 },
+        { country: 'Bhutan', clicks: 8406, scans: 7298 },
+        { country: 'Bolivia', clicks: 5908, scans: 1734 },
+        { country: 'Bosnia and Herzegovina', clicks: 2753, scans: 9384 },
+        { country: 'Botswana', clicks: 7391, scans: 2906 },
+        { country: 'Brazil', clicks: 1268, scans: 5914 },
+        { country: 'Brunei', clicks: 1049, scans: 7283 },
+        { country: 'Bulgaria', clicks: 3765, scans: 5146 },
+        { country: 'Burkina Faso', clicks: 9786, scans: 1357 },
+        { country: 'Burundi', clicks: 8356, scans: 5402 },
+        { country: 'Cabo Verde', clicks: 5271, scans: 9460 },
+        { country: 'Cambodia', clicks: 4235, scans: 3649 },
+        { country: 'Cameroon', clicks: 9167, scans: 7850 },
+        { country: 'Canada', clicks: 7431, scans: 1524 },
+        { country: 'Central African Republic', clicks: 3807, scans: 2419 },
+        { country: 'Chad', clicks: 1984, scans: 8624 },
+        { country: 'Chile', clicks: 5497, scans: 2936 },
+        { country: 'China', clicks: 8743, scans: 6501 },
+        { country: 'Colombia', clicks: 2704, scans: 7532 },
+        { country: 'Comoros', clicks: 1027, scans: 3912 },
+        { country: 'Congo, Democratic Republic of the', clicks: 1914, scans: 7324 },
+        { country: 'Congo, Republic of the', clicks: 7029, scans: 1298 },
+        { country: 'Costa Rica', clicks: 9341, scans: 5432 },
+        { country: 'Croatia', clicks: 8170, scans: 3965 },
+        { country: 'Cuba', clicks: 3835, scans: 6219 },
+        { country: 'Cyprus', clicks: 4726, scans: 9074 },
+        { country: 'Czech Republic', clicks: 6083, scans: 1471 },
+        { country: 'Denmark', clicks: 5489, scans: 6308 },
+        { country: 'Djibouti', clicks: 1894, scans: 4536 },
+        { country: 'Dominica', clicks: 7238, scans: 5329 },
+        { country: 'Dominican Republic', clicks: 9076, scans: 3914 },
+        { country: 'Ecuador', clicks: 1462, scans: 6539 },
+        { country: 'Egypt', clicks: 7358, scans: 4681 },
+        { country: 'El Salvador', clicks: 1930, scans: 8467 },
+        { country: 'Equatorial Guinea', clicks: 9163, scans: 2875 },
+        { country: 'Eritrea', clicks: 5971, scans: 5397 },
+        { country: 'Estonia', clicks: 8152, scans: 6201 },
+        { country: 'Eswatini', clicks: 1639, scans: 8031 },
+        { country: 'Ethiopia', clicks: 4187, scans: 9261 },
+        { country: 'Fiji', clicks: 5034, scans: 7064 },
+        { country: 'Finland', clicks: 1875, scans: 4729 },
+        { country: 'France', clicks: 3762, scans: 7205 },
+        { country: 'Gabon', clicks: 1496, scans: 9083 },
+        { country: 'Gambia', clicks: 2983, scans: 3657 },
+        { country: 'Georgia', clicks: 6581, scans: 5784 },
+        { country: 'Germany', clicks: 8106, scans: 3542 },
+        { country: 'Ghana', clicks: 1683, scans: 7038 },
+        { country: 'Greece', clicks: 5604, scans: 1728 },
+        { country: 'Greenland', clicks: 5604, scans: 1728 },
+        { country: 'Grenada', clicks: 9384, scans: 1503 },
+        { country: 'Guatemala', clicks: 1084, scans: 5831 },
+        { country: 'Guinea', clicks: 9210, scans: 1435 },
+        { country: 'Guinea-Bissau', clicks: 6943, scans: 1836 },
+        { country: 'Guyana', clicks: 5239, scans: 4781 },
+        { country: 'Haiti', clicks: 7126, scans: 6102 },
+        { country: 'Honduras', clicks: 3041, scans: 9382 },
+        { country: 'Hungary', clicks: 4903, scans: 1028 },
+        { country: 'Iceland', clicks: 9736, scans: 4920 },
+        { country: 'India', clicks: 2000, scans: 5400 },
+        { country: 'Indonesia', clicks: 7281, scans: 5392 },
+        { country: 'Iran', clicks: 1723, scans: 9428 },
+        { country: 'Iraq', clicks: 5683, scans: 1047 },
+        { country: 'Ireland', clicks: 4937, scans: 1846 },
+        { country: 'Israel', clicks: 6741, scans: 1482 },
+        { country: 'Italy', clicks: 7839, scans: 3807 },
+        { country: 'Jamaica', clicks: 6013, scans: 9037 },
+        { country: 'Japan', clicks: 2041, scans: 9253 },
+        { country: 'Jordan', clicks: 6543, scans: 1506 },
+        { country: 'Kazakhstan', clicks: 9207, scans: 4783 },
+        { country: 'Kenya', clicks: 1834, scans: 8963 },
+        { country: 'Kiribati', clicks: 5293, scans: 1547 },
+        { country: 'Korea, North', clicks: 4983, scans: 7031 },
+        { country: 'Korea, South', clicks: 1864, scans: 4857 },
+        { country: 'Kosovo', clicks: 9248, scans: 4923 },
+        { country: 'Kuwait', clicks: 6378, scans: 7095 },
+        { country: 'Kyrgyzstan', clicks: 7021, scans: 3571 },
+        { country: 'Laos', clicks: 4185, scans: 8952 },
+        { country: 'Latvia', clicks: 1968, scans: 8013 },
+        { country: 'Lebanon', clicks: 2891, scans: 7360 },
+        { country: 'Lesotho', clicks: 8457, scans: 5941 },
+        { country: 'Liberia', clicks: 5637, scans: 9234 },
+        { country: 'Libya', clicks: 9381, scans: 3081 },
+        { country: 'Liechtenstein', clicks: 1985, scans: 6890 },
+        { country: 'Lithuania', clicks: 4278, scans: 1082 },
+        { country: 'Luxembourg', clicks: 5036, scans: 9073 },
+        { country: 'Madagascar', clicks: 1098, scans: 4285 },
+        { country: 'Malawi', clicks: 7851, scans: 9632 },
+        { country: 'Malaysia', clicks: 5136, scans: 1826 },
+        { country: 'Maldives', clicks: 2178, scans: 7395 },
+        { country: 'Mali', clicks: 3562, scans: 1937 },
+        { country: 'Malta', clicks: 7849, scans: 4582 },
+        { country: 'Marshall Islands', clicks: 8240, scans: 1463 },
+        { country: 'Mauritania', clicks: 4752, scans: 8394 },
+        { country: 'Mauritius', clicks: 6231, scans: 7148 },
+        { country: 'Mexico', clicks: 3563, scans: 1730 },
+        { country: 'Micronesia', clicks: 2901, scans: 9345 },
+        { country: 'Moldova', clicks: 2945, scans: 4892 },
+        { country: 'Monaco', clicks: 6942, scans: 8532 },
+        { country: 'Mongolia', clicks: 1752, scans: 9628 },
+        { country: 'Montenegro', clicks: 3975, scans: 1273 },
+        { country: 'Morocco', clicks: 5018, scans: 1362 },
+        { country: 'Mozambique', clicks: 4216, scans: 7481 },
+        { country: 'Myanmar', clicks: 6031, scans: 3958 },
+        { country: 'Namibia', clicks: 8261, scans: 5263 },
+        { country: 'Nauru', clicks: 4697, scans: 3501 },
+        { country: 'Nepal', clicks: 8751, scans: 9241 },
+        { country: 'Netherlands', clicks: 5912, scans: 6382 },
+        { country: 'New Zealand', clicks: 7295, scans: 1073 },
+        { country: 'Nicaragua', clicks: 8472, scans: 5649 },
+        { country: 'Niger', clicks: 6378, scans: 7341 },
+        { country: 'Nigeria', clicks: 2974, scans: 3851 },
+        { country: 'North Macedonia', clicks: 8740, scans: 2961 },
+        { country: 'Norway', clicks: 2451, scans: 9037 },
+        { country: 'Oman', clicks: 6347, scans: 5018 },
+        { country: 'Pakistan', clicks: 5873, scans: 4902 },
+        { country: 'Palau', clicks: 1924, scans: 3674 },
+        { country: 'Palestine', clicks: 3718, scans: 9735 },
+        { country: 'Panama', clicks: 7163, scans: 6482 },
+        { country: 'Papua New Guinea', clicks: 2091, scans: 5241 },
+        { country: 'Paraguay', clicks: 6479, scans: 3526 },
+        { country: 'Peru', clicks: 2195, scans: 1583 },
+        { country: 'Philippines', clicks: 1437, scans: 3928 },
+        { country: 'Poland', clicks: 1987, scans: 3726 },
+        { country: 'Portugal', clicks: 3564, scans: 6238 },
+        { country: 'Qatar', clicks: 6921, scans: 9527 },
+        { country: 'Romania', clicks: 8091, scans: 6347 },
+        { country: 'Russia', clicks: 4712, scans: 5014 },
+        { country: 'Rwanda', clicks: 9351, scans: 1582 },
+        { country: 'Saint Kitts and Nevis', clicks: 4897, scans: 2934 },
+        { country: 'Saint Lucia', clicks: 1047, scans: 6892 },
+        { country: 'Saint Vincent and the Grenadines', clicks: 2594, scans: 5132 },
+        { country: 'Samoa', clicks: 1865, scans: 4738 },
+        { country: 'San Marino', clicks: 3184, scans: 6952 },
+        { country: 'Sao Tome and Principe', clicks: 4726, scans: 2387 },
+        { country: 'Saudi Arabia', clicks: 4973, scans: 6487 },
+        { country: 'Senegal', clicks: 2734, scans: 4962 },
+        { country: 'Serbia', clicks: 8926, scans: 3241 },
+        { country: 'Seychelles', clicks: 8031, scans: 1267 },
+        { country: 'Sierra Leone', clicks: 7942, scans: 2804 },
+        { country: 'Singapore', clicks: 8321, scans: 1938 },
+        { country: 'Slovakia', clicks: 9038, scans: 4856 },
+        { country: 'Slovenia', clicks: 5732, scans: 6341 },
+        { country: 'Solomon Islands', clicks: 3526, scans: 4039 },
+        { country: 'Somalia', clicks: 9734, scans: 3087 },
+        { country: 'South Africa', clicks: 2974, scans: 5971 },
+        { country: 'South Sudan', clicks: 6538, scans: 4173 },
+        { country: 'Spain', clicks: 5746, scans: 3681 },
+        { country: 'Sri Lanka', clicks: 9218, scans: 1534 },
+        { country: 'Sudan', clicks: 4682, scans: 6057 },
+        { country: 'Suriname', clicks: 5792, scans: 9362 },
+        { country: 'Sweden', clicks: 2784, scans: 5036 },
+        { country: 'Switzerland', clicks: 1362, scans: 5938 },
+        { country: 'Syria', clicks: 6973, scans: 1825 },
+        { country: 'Taiwan', clicks: 5173, scans: 4097 },
+        { country: 'Tajikistan', clicks: 4829, scans: 6208 },
+        { country: 'Tanzania', clicks: 7931, scans: 4517 },
+        { country: 'Thailand', clicks: 1294, scans: 5729 },
+        { country: 'Timor-Leste', clicks: 8046, scans: 4168 },
+        { country: 'Togo', clicks: 1562, scans: 4821 },
+        { country: 'Tonga', clicks: 2713, scans: 6953 },
+        { country: 'Trinidad and Tobago', clicks: 7325, scans: 5034 },
+        { country: 'Tunisia', clicks: 1452, scans: 7834 },
+        { country: 'Turkey', clicks: 8037, scans: 5628 },
+        { country: 'Turkmenistan', clicks: 7129, scans: 6184 },
+        { country: 'Tuvalu', clicks: 5274, scans: 1397 },
+        { country: 'Uganda', clicks: 4793, scans: 5937 },
+        { country: 'Ukraine', clicks: 5142, scans: 8261 },
+        { country: 'United Arab Emirates', clicks: 9231, scans: 1934 },
+        { country: 'United Kingdom', clicks: 6413, scans: 7105 },
+        { country: 'United States of America', clicks: 1587, scans: 9034 },
+        { country: 'Uruguay', clicks: 7496, scans: 4827 },
+        { country: 'Uzbekistan', clicks: 1987, scans: 4691 },
+        { country: 'Vanuatu', clicks: 4531, scans: 1092 },
+        { country: 'Vatican City', clicks: 3957, scans: 6821 },
+        { country: 'Venezuela', clicks: 5423, scans: 7824 },
+        { country: 'Vietnam', clicks: 6193, scans: 3795 },
+        { country: 'Yemen', clicks: 4398, scans: 6481 },
+        { country: 'Zambia', clicks: 5146, scans: 2874 },
+        { country: 'Zimbabwe', clicks: 4371, scans: 2957 }
+      ]
+
+
+      const countryData = new Map(data.map(d => [d.country.toLowerCase(), d]));
+        console.log(countryData.get("india"));
+
+        const container = d3.select("#map");
+        const width = container.node().clientWidth;
+        const height = container.node().clientHeight;
+
+        const projection = d3.geoNaturalEarth1()
+            .scale(width / 5.5) // Adjust the scale to fit the container better
+            .translate([width / 2, height / 2]);
+
+        const path = d3.geoPath().projection(projection);
+
+        const svg = container.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Define the radial gradient for the globe effect
+        const defs = svg.append("defs");
+        const radialGradient = defs.append("radialGradient")
+            .attr("id", "globe-gradient")
+            .attr("cx", "50%")
+            .attr("cy", "50%")
+            .attr("r", "50%")
+            .attr("fx", "50%")
+            .attr("fy", "50%");
+
+        radialGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#e0f7fa") // Light blue color
+            .attr("stop-opacity", 1);
+
+        radialGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#81d4fa") // Slightly darker blue
+            .attr("stop-opacity", 1);
+
+        // Draw the globe background using GeoJSON Sphere
+        const globeGroup = svg.append("g");
+
+        globeGroup.append("path")
+            .datum({type: "Sphere"})
+            .attr("class", "globe-background")
+            .attr("d", path);
+
+        // Draw the map
+        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(world => {
+            console.log(world);
+            const countries = topojson.feature(world, world.objects.countries).features;
+            console.log(countries);
+
+            globeGroup.selectAll(".country")
+                .data(countries)
+                .enter().append("path")
+                .attr("class", "country")
+                .attr("d", path)
+                .style("fill", d => {
+                    const country = countryData.get(d.properties.name.toLowerCase());
+                    return country ? getColor(country.clicks) : "rgba(0,0,0,0.3)";
+                })
+                .on("mouseover", function(event, d) {
+                    const country = countryData.get(d.properties.name.toLowerCase());
+                    if (country) {
+                        d3.select("#tooltip")
+                            .style("visibility", "visible")
+                            .style("background-color","black")
+                            .style("color","white")
+                            .html(`${country.country}<br>Clicks: ${country.clicks}<br>Scans: ${country.scans}`)
+                            .style("left", `${event.pageX + 5}px`)
+                            .style("top", `${event.pageY - 28}px`);
+                    }
+                })
+                .on("mouseout", function() {
+                    d3.select("#tooltip").style("visibility", "hidden");
+                });
+        });
+
+        const colorScale = d3.scaleSequential(d3.interpolateOranges)
+            .domain([0, d3.max(data, d => d.clicks)]);
+
+        function getColor(clicks) {
+            console.log("colors: ", colorScale(clicks));
+            return colorScale(clicks);
+        }
+
+        // Add resize event listener to adjust the map when the window size changes
+        window.addEventListener('resize', function() {
+            const newWidth = container.node().clientWidth;
+            const newHeight = container.node().clientHeight;
+            
+            svg.attr("width", newWidth)
+               .attr("height", newHeight);
+            
+            projection
+                .scale(newWidth / 5.5) // Adjust the scale to fit the container better
+                .translate([newWidth / 2, newHeight / 2]);
+
+            globeGroup.selectAll(".country").attr("d", path);
+            globeGroup.select(".globe-background").attr("d", path);
+        });
+    </script>
+</body> -->
+
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div id="root">
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    </div>
   </body>
 </html>
